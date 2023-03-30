@@ -1,0 +1,1 @@
+0 * * * * /usr/bin/curl -s -m 10 --head http://google.ro http://yahoo.com > /dev/null || echo "At least one site is down" | mail -s "Site status report" sebastian.lehene@yahoo.com
