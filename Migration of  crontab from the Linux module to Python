@@ -1,0 +1,50 @@
+from typing import List
+import curl
+import smtplib
+from email.message import EmailMessage
+
+
+class WebsiteChecker:
+    def check_status(self, url: str) -> bool:
+        pass
+
+
+class CurlWebsiteChecker(WebsiteChecker):
+    def check_status(self, url: str) -> bool:
+        c = curl.Curl()
+        c.setopt(c.URL, url)
+        c.setopt(c.TIMEOUT, 10)
+        c.setopt(c.NOBODY, True)
+        c.perform()
+        status_code = c.getinfo(c.RESPONSE_CODE)
+        return status_code == 200
+
+
+class EmailSender:
+    def send_email(self, subject: str, message: str, recipient: str) -> None:
+        pass
+
+
+class SMTPEmailSender(EmailSender):
+    def send_email(self, subject: str, message: str, recipient: str) -> None:
+        msg = EmailMessage()
+        msg.set_content(message)
+        msg['Subject'] = subject
+        msg['To'] = recipient
+        smtp_server = smtplib.SMTP('localhost')
+        smtp_server.send_message(msg)
+        smtp_server.quit()
+
+
+class SiteStatusChecker:
+    def __init__(self, website_checker: WebsiteChecker, email_sender: EmailSender):
+        self.website_checker = website_checker
+        self.email_sender = email_sender
+
+    def check_sites(self, sites: List[str], recipient: str) -> None:
+        for site in sites:
+            if not self.website_checker.check_status(site):
+                subject = "Site status report"
+                message = f"{site} is down"
+                self.email_sender.send_email(subject, message, recipient)
+                break
