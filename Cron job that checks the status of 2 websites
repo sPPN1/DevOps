@@ -1,0 +1,1 @@
+0 * * * * /bin/bash -c 'if [[ $(curl --silent --head --fail http://google.ro http://yahoo.com | grep "200 OK") ]]; then echo "All sites are up" ; else echo "At least one site is down" | mail -s "Site status report" sebastian.lehene@yahoo.com; fi'
